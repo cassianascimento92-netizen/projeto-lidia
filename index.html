@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lídia — Sua Assistente de Negócios da Beleza</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#F7F3EE;--warm:#F1EAE0;--warm-white:#FDFBF8;
+  --rose:#B85C74;--rose-dark:#8B3E54;--rose-light:#EDD5DC;--rose-xlight:#FAF0F3;
+  --gold:#A67C45;--gold-light:#E8D9C0;--gold-xlight:#F8F2E8;
+  --charcoal:#2A2520;--ink:#0F0D0B;--ink2:#211E1A;
+  --muted:#8A8078;--border:rgba(180,160,140,0.22);--border2:rgba(140,120,100,0.3);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden;line-height:1.6;}
+
+/* WELCOME */
+#welcome{position:fixed;inset:0;background:var(--ink2);z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;transition:opacity .8s;}
+#welcome.hide{opacity:0;pointer-events:none;}
+.ws-circle{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--rose-dark));display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative;animation:wsPulse 2.5s ease-in-out infinite;}
+.ws-circle::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:1.5px solid rgba(184,92,116,.3);animation:wsPulseRing 2.5s ease-in-out infinite;}
+@keyframes wsPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes wsPulseRing{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.1);opacity:0}}
+.ws-letter{font-family:'Libre Baskerville',serif;font-size:34px;font-weight:700;color:#fff;font-style:italic;}
+.ws-name{font-family:'Libre Baskerville',serif;font-size:clamp(30px,6vw,48px);font-weight:700;color:#fff;margin-bottom:6px;}
+.ws-name em{color:var(--rose);font-style:italic;}
+.ws-role{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:28px;}
+.ws-bubble{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;border-top-left-radius:2px;padding:20px 26px;max-width:460px;margin:0 auto 28px;text-align:left;}
+.ws-text{font-size:15px;color:rgba(255,255,255,.7);line-height:1.78;}
+.ws-text strong{color:#fff;}
+.ws-typing{display:flex;gap:5px;margin-top:10px;}
+.ws-dot{width:6px;height:6px;border-radius:50%;background:var(--rose);animation:wsT 1.2s ease-in-out infinite;}
+.ws-dot:nth-child(2){animation-delay:.2s;}
+.ws-dot:nth-child(3){animation-delay:.4s;}
+@keyframes wsT{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
+.ws-btn{background:var(--rose);color:#fff;border:none;padding:14px 40px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .3s;}
+.ws-btn:hover{background:var(--rose-dark);}
+.ws-promise{display:flex;gap:18px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
+.ws-pi{display:flex;align-items:center;gap:7px;font-size:11px;color:rgba(255,255,255,.25);}
+.ws-pd{width:5px;height:5px;border-radius:50%;background:var(--gold);}
+
+/* SHELL */
+#app{display:none;}
+#app.visible{display:block;}
+.app-header{position:fixed;top:0;left:0;right:0;background:rgba(247,243,238,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);z-index:100;padding:0 5%;height:62px;display:flex;align-items:center;justify-content:space-between;}
+.h-lidia{display:flex;align-items:center;gap:10px;}
+.h-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--rose-dark));display:flex;align-items:center;justify-content:center;font-family:'Libre Baskerville',serif;font-size:13px;font-weight:700;color:#fff;font-style:italic;flex-shrink:0;}
+.h-name{font-size:14px;font-weight:500;color:var(--ink2);}
+.h-status{font-size:11px;color:var(--rose);display:flex;align-items:center;gap:5px;}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--rose);animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.h-phase{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.prog-bar{position:fixed;top:62px;left:0;right:0;height:2px;background:var(--border);z-index:99;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--gold));transition:width .5s;width:0%;}
+main{padding-top:84px;}
+
+/* STAGES */
+.stage{display:none;}
+.stage.active{display:block;animation:stIn .45s ease;}
+@keyframes stIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* LÍDIA MSGS */
+.lmsg{display:flex;gap:12px;margin-bottom:16px;align-items:flex-start;}
+.lav{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--rose-dark));display:flex;align-items:center;justify-content:center;font-family:'Libre Baskerville',serif;font-size:12px;font-weight:700;color:#fff;font-style:italic;flex-shrink:0;margin-top:2px;}
+.lbody{flex:1;}
+.lname{font-size:10px;font-weight:500;color:var(--rose);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
+.lbubble{background:#fff;border:1px solid var(--border2);border-radius:12px;border-top-left-radius:2px;padding:13px 17px;font-size:15px;color:var(--ink2);line-height:1.75;margin-bottom:7px;}
+.lbubble strong{font-weight:500;}
+.lbubble em{color:var(--rose);font-style:italic;}
+.lbubble.dark{background:var(--ink2);border-color:var(--ink2);color:rgba(255,255,255,.82);}
+.lbubble.dark strong{color:#fff;}
+.lbubble.dark em{color:var(--rose);}
+.lbubble.pink{background:var(--rose-xlight);border-color:var(--rose-light);}
+
+/* QUIZ */
+.quiz-intro{max-width:660px;margin:0 auto;padding:36px 5% 28px;}
+.qwrap{max-width:660px;margin:0 auto;padding:28px 5% 80px;}
+.screen{display:none;animation:scIn .4s ease;}
+.screen.active{display:block;}
+@keyframes scIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.step-ind{display:flex;align-items:center;gap:11px;margin-bottom:36px;}
+.sdots{display:flex;gap:5px;}
+.sdot2{width:20px;height:3px;border-radius:2px;background:var(--border);transition:all .3s;}
+.sdot2.done{background:var(--rose-light);}
+.sdot2.active{background:var(--rose);width:36px;}
+.stext{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-left:auto;}
+.q-ey{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:11px;}
+.q-title{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,4vw,36px);font-weight:300;line-height:1.25;margin-bottom:9px;}
+.q-title em{color:var(--rose);font-style:italic;}
+.q-hint{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:28px;font-weight:300;}
+.ig{margin-bottom:16px;}
+.il{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+input[type=text],textarea,select{width:100%;background:var(--warm-white);border:1px solid var(--border);border-radius:2px;padding:12px 15px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--charcoal);outline:none;transition:border-color .3s;appearance:none;}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--rose);background:#fff;}
+textarea{resize:vertical;min-height:86px;line-height:1.6;}
+select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238A7F78' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:36px;}
+.ogrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:9px;margin-bottom:7px;}
+.ocard{background:var(--warm-white);border:1px solid var(--border);border-radius:4px;padding:14px 11px;cursor:pointer;transition:all .22s;text-align:center;}
+.ocard:hover{border-color:var(--rose-light);}
+.ocard.selected{border-color:var(--rose);background:var(--rose-light);}
+.ocard.selected .olabel{color:var(--rose-dark);}
+.oicon{font-size:19px;margin-bottom:6px;display:block;}
+.olabel{font-size:12px;color:var(--charcoal);}
+.tgrid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:7px;}
+.tbtn{padding:7px 15px;border:1px solid var(--border);border-radius:100px;background:var(--warm-white);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--muted);cursor:pointer;transition:all .2s;}
+.tbtn:hover{border-color:var(--rose-light);color:var(--charcoal);}
+.tbtn.selected{background:var(--charcoal);color:var(--cream);border-color:var(--charcoal);}
+.thint{font-size:12px;color:var(--muted);margin-top:6px;}
+.nav-row{display:flex;align-items:center;justify-content:space-between;margin-top:32px;gap:12px;}
+.btn-p{display:inline-flex;align-items:center;gap:8px;background:var(--charcoal);color:var(--cream);border:none;padding:13px 32px;font-family:'DM Sans',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .3s;position:relative;overflow:hidden;}
+.btn-p::after{content:'';position:absolute;inset:0;background:var(--rose);transform:translateX(-100%);transition:transform .3s;z-index:0;}
+.btn-p:hover::after{transform:translateX(0);}
+.btn-p span{position:relative;z-index:1;}
+.btn-s{display:inline-flex;align-items:center;background:transparent;color:var(--muted);border:1px solid var(--border);padding:10px 22px;font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .3s;}
+.btn-s:hover{border-color:var(--rose);color:var(--rose);}
+
+/* RESULTADO - PROMPTS */
+.result-wrap{max-width:720px;margin:0 auto;padding:32px 5% 60px;}
+.manual-cover{background:var(--charcoal);border-radius:14px;padding:44px 40px;margin-bottom:28px;position:relative;overflow:hidden;}
+.manual-cover::before{content:'';position:absolute;top:-70px;right:-70px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(184,92,116,.25) 0%,transparent 65%);}
+.manual-cover::after{content:'';position:absolute;bottom:-50px;left:-30px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(166,124,69,.18) 0%,transparent 65%);}
+.cov-ey{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;position:relative;z-index:1;}
+.cov-brand{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,5vw,44px);font-weight:300;color:#fff;line-height:1.1;margin-bottom:7px;position:relative;z-index:1;}
+.cov-brand em{color:var(--rose);font-style:italic;}
+.cov-nicho{font-size:11px;color:rgba(255,255,255,.36);letter-spacing:3px;text-transform:uppercase;margin-bottom:20px;position:relative;z-index:1;}
+.cov-tags{display:flex;flex-wrap:wrap;gap:6px;position:relative;z-index:1;}
+.cov-pill{padding:4px 12px;border:1px solid rgba(255,255,255,.12);border-radius:20px;font-size:11px;color:rgba(255,255,255,.48);letter-spacing:1px;}
+
+/* PROMPT CARDS */
+.prompt-card{background:#fff;border:1px solid var(--border2);border-radius:10px;margin-bottom:14px;overflow:hidden;}
+.pc-head{display:flex;align-items:center;gap:13px;padding:16px 20px;cursor:pointer;user-select:none;transition:background .2s;}
+.pc-head:hover{background:var(--cream);}
+.pc-num{width:32px;height:32px;border-radius:50%;background:var(--rose-xlight);color:var(--rose-dark);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pc-meta{flex:1;}
+.pc-title{font-size:14px;font-weight:500;color:var(--ink2);margin-bottom:2px;}
+.pc-sub{font-size:12px;color:var(--muted);}
+.pc-arrow{font-size:18px;color:var(--muted);transition:transform .3s;flex-shrink:0;}
+.pc-arrow.open{transform:rotate(45deg);}
+.pc-body{display:none;padding:0 20px 20px;}
+.pc-body.open{display:block;}
+.pc-box{background:#0a0a12;border:1px solid rgba(184,92,116,.2);border-radius:9px;padding:16px 18px;margin-bottom:12px;}
+.pc-box-label{font-size:10px;font-weight:500;color:#1D9E75;letter-spacing:2px;text-transform:uppercase;margin-bottom:9px;display:flex;align-items:center;gap:6px;}
+.pc-box-label::before{content:'';display:inline-block;width:5px;height:5px;background:#1D9E75;border-radius:50%;}
+.pc-text{font-size:13px;color:rgba(255,255,255,.82);line-height:1.8;white-space:pre-wrap;font-family:'DM Sans',sans-serif;}
+.pc-text em{color:var(--rose);font-style:normal;font-weight:500;}
+.pc-tip{background:var(--warm);border-left:2px solid var(--gold);border-radius:0 7px 7px 0;padding:11px 14px;font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:11px;}
+.pc-tip strong{color:var(--ink2);}
+.copy-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--muted);background:var(--cream);border:1px solid var(--border2);border-radius:5px;padding:7px 13px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.copy-btn:hover{border-color:var(--rose);color:var(--rose);}
+.copy-btn.copied{color:#0F6E56;border-color:#5DCAA5;}
+
+/* TRANSIÇÃO */
+.next-block{background:var(--ink2);border-radius:12px;padding:28px 32px;margin-top:32px;text-align:center;}
+.next-block .nb-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:#fff;margin-bottom:8px;}
+.next-block .nb-title em{color:var(--rose);font-style:italic;}
+.next-block .nb-sub{font-size:14px;color:rgba(255,255,255,.4);line-height:1.7;margin-bottom:18px;}
+.ns-btn{background:var(--rose);color:#fff;border:none;padding:13px 32px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:background .3s;}
+.ns-btn:hover{background:var(--rose-dark);}
+
+/* GUIA */
+.guia-wrap{max-width:680px;margin:0 auto;padding:0 5% 80px;}
+.sdiv{display:flex;align-items:center;gap:13px;margin:40px 0 24px;}
+.sdiv-line{flex:1;height:1px;background:var(--border);}
+.sdiv-label{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+.promise{background:var(--ink2);border-radius:8px;padding:28px 32px;margin-bottom:24px;text-align:center;position:relative;overflow:hidden;}
+.promise::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(184,92,116,.15) 0%,transparent 65%);}
+.prom-ey{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:11px;}
+.prom-title{font-family:'Libre Baskerville',serif;font-size:clamp(18px,3.5vw,28px);font-weight:700;color:#fff;line-height:1.25;margin-bottom:9px;}
+.prom-title em{color:var(--rose);font-style:italic;}
+.prom-sub{font-size:14px;color:rgba(255,255,255,.38);line-height:1.7;}
+.prom-pills{display:flex;gap:9px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.ppill{padding:5px 13px;border:1px solid rgba(255,255,255,.09);border-radius:2px;font-size:11px;color:rgba(255,255,255,.32);letter-spacing:1px;}
+.ppill.on{border-color:rgba(184,92,116,.4);color:var(--rose);background:rgba(184,92,116,.08);}
+.fcard{border-radius:4px;padding:22px 26px;margin:14px 0;border:1px solid transparent;}
+.fcard.rose{background:var(--rose-xlight);border-color:var(--rose-light);}
+.fcard.gold{background:var(--gold-xlight);border-color:var(--gold-light);}
+.fcard.dark{background:var(--ink2);}
+.flabel{font-size:10px;letter-spacing:4px;text-transform:uppercase;font-weight:500;margin-bottom:7px;}
+.fcard.rose .flabel{color:var(--rose);}
+.fcard.gold .flabel{color:var(--gold);}
+.fcard.dark .flabel{color:var(--gold);}
+.ftitle{font-family:'Libre Baskerville',serif;font-size:17px;font-weight:700;margin-bottom:5px;}
+.fcard.rose .ftitle,.fcard.gold .ftitle{color:var(--ink2);}
+.fcard.dark .ftitle{color:#fff;}
+.fperiod{font-size:12px;margin-bottom:13px;}
+.fcard.rose .fperiod,.fcard.gold .fperiod{color:var(--muted);}
+.fcard.dark .fperiod{color:rgba(255,255,255,.3);}
+.fmeta{display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:2px;margin-bottom:14px;}
+.fcard.rose .fmeta{background:rgba(184,92,116,.07);}
+.fcard.gold .fmeta{background:rgba(166,124,69,.07);}
+.fcard.dark .fmeta{background:rgba(255,255,255,.05);}
+.fml{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+.fcard.dark .fml{color:rgba(255,255,255,.28);}
+.fmv{font-size:13px;font-weight:500;}
+.fcard.rose .fmv,.fcard.gold .fmv{color:var(--ink2);}
+.fcard.dark .fmv{color:#fff;}
+.ftasks{list-style:none;}
+.ftask{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px;}
+.fcard.dark .ftask{border-bottom-color:rgba(255,255,255,.06);}
+.ftask:last-child{border-bottom:none;}
+.tism{font-size:14px;flex-shrink:0;margin-top:1px;}
+.tt{font-weight:500;margin-bottom:2px;}
+.fcard.rose .tt,.fcard.gold .tt{color:var(--ink2);}
+.fcard.dark .tt{color:#fff;}
+.td{font-size:12px;line-height:1.55;}
+.fcard.rose .td,.fcard.gold .td{color:var(--muted);}
+.fcard.dark .td{color:rgba(255,255,255,.42);}
+.tpill{display:inline-block;font-size:10px;font-weight:500;padding:2px 7px;border-radius:2px;margin-top:4px;letter-spacing:1px;text-transform:uppercase;}
+.pfree{background:#EAF3DE;color:#3B6D11;}
+.plow{background:var(--gold-light);color:#6B4E10;}
+.pkey{background:var(--rose-light);color:#7A2E42;}
+.porg{background:#E6F1FB;color:#185FA5;}
+.math-b{background:var(--ink2);border-radius:4px;padding:20px 24px;margin:14px 0;}
+.math-ey{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.math-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:14px;}
+.math-row:last-of-type{border-bottom:none;}
+.mlabel{color:rgba(255,255,255,.48);}
+.mval{color:#fff;font-weight:500;}
+.math-tot{display:flex;justify-content:space-between;align-items:center;padding:11px 0 0;margin-top:6px;border-top:1px solid rgba(255,255,255,.14);}
+.mtlabel{font-size:14px;font-weight:500;color:#fff;}
+.mtval{font-family:'Libre Baskerville',serif;font-size:24px;font-weight:700;color:var(--rose);}
+.script-b{background:var(--warm);border-radius:4px;padding:16px 20px;margin:14px 0;border:1px solid var(--border2);}
+.sc-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.sc-text{font-size:14px;color:var(--ink2);line-height:1.8;font-style:italic;}
+.sc-text em{color:var(--rose);font-style:normal;font-weight:500;}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:14px 0;}
+@media(max-width:480px){.cgrid{grid-template-columns:1fr;}}
+.ccard{background:#fff;border:1px solid var(--border2);border-radius:4px;padding:15px;}
+.ctype{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:500;margin-bottom:6px;}
+.ctype.org{color:#0F6E56;}
+.ctype.paga{color:var(--rose);}
+.ctitle{font-size:13px;font-weight:500;color:var(--ink2);margin-bottom:6px;}
+.citems{list-style:none;}
+.citems li{font-size:12px;color:var(--muted);padding:3px 0;display:flex;gap:6px;}
+.citems li::before{content:'→';color:var(--rose);flex-shrink:0;}
+.cklist{list-style:none;margin:14px 0;border:1px solid var(--border2);border-radius:4px;overflow:hidden;}
+.cklist li{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);font-size:14px;color:var(--muted);background:#fff;}
+.cklist li:last-child{border-bottom:none;}
+.cklist li:nth-child(even){background:var(--cream);}
+.ck-c{width:19px;height:19px;border-radius:50%;border:1.5px solid var(--rose);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:10px;color:var(--rose);font-weight:700;}
+.tgrid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:9px;margin:14px 0;}
+.tg{background:#fff;border:1px solid var(--border2);border-radius:4px;padding:13px 14px;}
+.tgl{width:26px;height:26px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-bottom:7px;}
+.tlrose{background:var(--rose-xlight);color:var(--rose);}
+.tlgold{background:var(--gold-xlight);color:var(--gold);}
+.tlgreen{background:#EAF3DE;color:#3B6D11;}
+.tlblue{background:#E6F1FB;color:#185FA5;}
+.tgname{font-size:13px;font-weight:500;color:var(--ink2);margin-bottom:2px;}
+.tgdesc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:5px;}
+.tgtag{font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#3B6D11;}
+.final-s{background:var(--ink2);padding:52px 5%;text-align:center;}
+.fav{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--rose-dark));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-family:'Libre Baskerville',serif;font-size:24px;font-weight:700;color:#fff;font-style:italic;}
+.ftitle2{font-family:'Libre Baskerville',serif;font-size:clamp(24px,4vw,38px);font-weight:700;color:#fff;line-height:1.2;margin-bottom:11px;}
+.ftitle2 em{color:var(--rose);font-style:italic;}
+.fsub{font-size:15px;color:rgba(255,255,255,.36);line-height:1.75;max-width:420px;margin:0 auto 26px;}
+.fbtn{display:inline-block;background:var(--rose);color:#fff;border:none;padding:13px 38px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;text-decoration:none;transition:background .3s;}
+.fbtn:hover{background:var(--rose-dark);}
+.fnote{font-size:11px;color:rgba(255,255,255,.16);margin-top:11px;}
+footer{background:var(--ink);padding:20px 5%;text-align:center;}
+.fbrand{font-family:'Libre Baskerville',serif;font-size:14px;letter-spacing:3px;color:rgba(255,255,255,.16);}
+.fbrand em{color:var(--rose);font-style:italic;}
+.fcopy{font-size:11px;color:rgba(255,255,255,.08);margin-top:5px;}
+.sticky{position:fixed;bottom:0;left:0;right:0;background:var(--ink2);border-top:1px solid rgba(255,255,255,.06);padding:10px 5%;display:flex;align-items:center;justify-content:space-between;z-index:99;transform:translateY(100%);transition:transform .4s;}
+.sticky.show{transform:translateY(0);}
+.stav{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--rose-dark));display:flex;align-items:center;justify-content:center;font-family:'Libre Baskerville',serif;font-size:10px;font-weight:700;color:#fff;font-style:italic;}
+.sttext{font-size:12px;color:rgba(255,255,255,.42);}
+.sttext strong{color:#fff;}
+.stbtn{background:var(--rose);color:#fff;border:none;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;}
+.fade-in{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.quiz-intro,.guia-wrap{padding-left:5%;padding-right:5%;}.manual-cover{padding:32px 22px;}.promise{padding:22px 18px;}.fcard{padding:18px 16px;}}
+</style>
+</head>
+<body>
+
+<!-- WELCOME -->
+<div id="welcome">
+  <div class="ws-circle"><div class="ws-letter">L</div></div>
+  <div class="ws-name">Olá! Eu sou a <em>Lídia</em></div>
+  <div class="ws-role">Sua assistente de negócios da beleza</div>
+  <div class="ws-bubble">
+    <div class="ws-text"><strong>Bem-vinda. Esse é o começo de tudo.</strong><br><br>Vou criar a <strong>identidade completa da sua marca</strong> agora mesmo — e depois te guiar para que sua empresa esteja pronta em <strong>48 horas</strong> e com campanhas no ar em <strong>7 dias</strong>, com meta de <strong>R$ 3.000 por mês</strong>.</div>
+    <div class="ws-typing"><div class="ws-dot"></div><div class="ws-dot"></div><div class="ws-dot"></div></div>
+  </div>
+  <button class="ws-btn" onclick="startApp()">Estou pronta, Lídia →</button>
+  <div class="ws-promise">
+    <div class="ws-pi"><div class="ws-pd"></div>Identidade visual agora</div>
+    <div class="ws-pi"><div class="ws-pd"></div>Empresa pronta em 48h</div>
+    <div class="ws-pi"><div class="ws-pd"></div>R$ 3.000/mês em 90 dias</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="app-header">
+    <div class="h-lidia">
+      <div class="h-av">L</div>
+      <div>
+        <div class="h-name">Lídia</div>
+        <div class="h-status"><span class="sdot"></span>Guiando você agora</div>
+      </div>
+    </div>
+    <div class="h-phase" id="hPhase">Passo 1 de 2</div>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="pFill"></div></div>
+
+  <main>
+
+    <!-- STAGE 1: IDENTIDADE -->
+    <div class="stage active" id="st-identity">
+
+      <!-- Intro da Lídia -->
+      <div class="quiz-intro" id="qIntro">
+        <div class="lmsg">
+          <div class="lav">L</div>
+          <div class="lbody">
+            <div class="lname">Lídia</div>
+            <div class="lbubble">Antes de qualquer coisa — <strong>sua marca precisa de identidade.</strong> É o que vai fazer sua cliente entender quem você é antes mesmo de você falar uma palavra.</div>
+            <div class="lbubble pink">Vou te fazer <strong>6 perguntas rápidas</strong>. Depois, vou gerar prompts personalizados com as suas respostas para você colar no <strong>Claude ou ChatGPT gratuito</strong> e receber sua identidade visual completa. <em>Tudo feito para você.</em> 🌸</div>
+            <div class="lbubble">Responda com calma — quanto mais honesta, mais poderosa será sua marca.</div>
+            <button class="btn-p" onclick="startQuiz()" style="margin-top:8px;"><span>Criar minha identidade →</span></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUIZ -->
+      <div id="qWrap" style="display:none;">
+
+        <!-- Q1 NICHO -->
+        <div class="screen active" id="sc-1">
+          <div class="qwrap">
+            <div class="step-ind"><div class="sdots" id="d-1"></div><div class="stext" id="st-1"></div></div>
+            <div class="q-ey">Etapa 1 de 6</div>
+            <div class="q-title">Qual é a sua<br><em>especialidade</em>?</div>
+            <div class="q-hint">Selecione a área principal do seu negócio.</div>
+            <div class="ogrid">
+              <div class="ocard" onclick="selOpt(this,'nicho','Esteticista Facial')"><span class="oicon">✨</span><div class="olabel">Esteticista Facial</div></div>
+              <div class="ocard" onclick="selOpt(this,'nicho','Nail Designer')"><span class="oicon">💅</span><div class="olabel">Nail Designer</div></div>
+              <div class="ocard" onclick="selOpt(this,'nicho','Micropigmentadora')"><span class="oicon">🎨</span><div class="olabel">Micropigmentadora</div></div>
+              <div class="ocard" onclick="selOpt(this,'nicho','Lash Designer')"><span class="oicon">👁️</span><div class="olabel">Lash Designer</div></div>
+              <div class="ocard" onclick="selOpt(this,'nicho','Design de Sobrancelha')"><span class="oicon">🪄</span><div class="olabel">Sobrancelha</div></div>
+              <div class="ocard" onclick="selOpt(this,'nicho','Massoterapeuta')"><span class="oicon">🌿</span><div class="olabel">Massoterapeuta</div></div>
+              <div class="ocard" onclick="selOpt(this,'nicho','Depiladora')"><span class="oicon">🌸</span><div class="olabel">Depiladora</div></div>
+              <div class="ocard" onclick="selOpt(this,'nicho','Maquiadora')"><span class="oicon">💄</span><div class="olabel">Maquiadora</div></div>
+            </div>
+            <div class="ig" style="margin-top:12px;"><label class="il">Ou descreva sua especialidade</label><input type="text" id="nicho-c" placeholder="Ex: Podóloga, Spa corporal..." oninput="bd.nicho=this.value"></div>
+            <div class="nav-row"><div></div><button class="btn-p" onclick="qNext(1)"><span>Continuar →</span></button></div>
+          </div>
+        </div>
+
+        <!-- Q2 NEGÓCIO -->
+        <div class="screen" id="sc-2">
+          <div class="qwrap">
+            <div class="step-ind"><div class="sdots" id="d-2"></div><div class="stext" id="st-2"></div></div>
+            <div class="q-ey">Etapa 2 de 6</div>
+            <div class="q-title">Dados do seu<br><em>negócio</em></div>
+            <div class="q-hint">Essas informações personalizam os seus prompts.</div>
+            <div class="ig"><label class="il">Nome do estúdio ou marca</label><input type="text" id="nome" placeholder="Ex: Studio Alves, Ateliê Belle..." oninput="bd.nome=this.value"></div>
+            <div class="ig"><label class="il">Cidade onde você atua</label><input type="text" id="cidade" placeholder="Ex: Salvador - BA" oninput="bd.cidade=this.value"></div>
+            <div class="ig"><label class="il">Há quanto tempo você atua?</label>
+              <select id="tempo" onchange="bd.tempo=this.value"><option value="">Selecione...</option><option value="menos de 1 ano">Menos de 1 ano</option><option value="1 a 3 anos">1 a 3 anos</option><option value="3 a 5 anos">3 a 5 anos</option><option value="mais de 5 anos">Mais de 5 anos</option></select>
+            </div>
+            <div class="nav-row"><button class="btn-s" onclick="qGoTo(1)">← Voltar</button><button class="btn-p" onclick="qNext(2)"><span>Continuar →</span></button></div>
+          </div>
+        </div>
+
+        <!-- Q3 CLIENTE -->
+        <div class="screen" id="sc-3">
+          <div class="qwrap">
+            <div class="step-ind"><div class="sdots" id="d-3"></div><div class="stext" id="st-3"></div></div>
+            <div class="q-ey">Etapa 3 de 6</div>
+            <div class="q-title">Quem é sua<br><em>cliente ideal</em>?</div>
+            <div class="q-hint">Quanto mais você conhece sua cliente, mais poderosa é sua marca.</div>
+            <div class="ig"><label class="il">Faixa etária principal</label>
+              <select id="idade" onchange="bd.idade=this.value"><option value="">Selecione...</option><option value="18 a 25 anos">18 a 25 anos</option><option value="25 a 35 anos">25 a 35 anos</option><option value="35 a 45 anos">35 a 45 anos</option><option value="45 anos ou mais">45 anos ou mais</option><option value="todas as idades">Todas as idades</option></select>
+            </div>
+            <div class="ig"><label class="il">O que sua cliente mais valoriza?</label>
+              <select id="valor" onchange="bd.valor=this.value"><option value="">Selecione...</option><option value="sofisticação e exclusividade">Sofisticação e exclusividade</option><option value="custo-benefício e praticidade">Custo-benefício e praticidade</option><option value="resultados visíveis e eficácia">Resultados visíveis</option><option value="cuidado e bem-estar">Cuidado e bem-estar</option><option value="tendências e inovação">Tendências e inovação</option></select>
+            </div>
+            <div class="ig"><label class="il">Descreva sua cliente ideal em uma frase</label><textarea id="cliente" placeholder="Ex: Mulheres de 28 a 40 anos que investem em si mesmas e buscam resultados sofisticados." oninput="bd.cliente=this.value"></textarea></div>
+            <div class="nav-row"><button class="btn-s" onclick="qGoTo(2)">← Voltar</button><button class="btn-p" onclick="qNext(3)"><span>Continuar →</span></button></div>
+          </div>
+        </div>
+
+        <!-- Q4 PERSONALIDADE -->
+        <div class="screen" id="sc-4">
+          <div class="qwrap">
+            <div class="step-ind"><div class="sdots" id="d-4"></div><div class="stext" id="st-4"></div></div>
+            <div class="q-ey">Etapa 4 de 6</div>
+            <div class="q-title">A personalidade<br>da sua <em>marca</em></div>
+            <div class="q-hint">Selecione até 3 adjetivos que representam como você quer ser percebida.</div>
+            <div class="tgrid">
+              <button class="tbtn" onclick="togTag(this,'Sofisticada')">Sofisticada</button><button class="tbtn" onclick="togTag(this,'Acolhedora')">Acolhedora</button><button class="tbtn" onclick="togTag(this,'Exclusiva')">Exclusiva</button><button class="tbtn" onclick="togTag(this,'Moderna')">Moderna</button><button class="tbtn" onclick="togTag(this,'Natural')">Natural</button><button class="tbtn" onclick="togTag(this,'Premium')">Premium</button><button class="tbtn" onclick="togTag(this,'Artesanal')">Artesanal</button><button class="tbtn" onclick="togTag(this,'Transformadora')">Transformadora</button><button class="tbtn" onclick="togTag(this,'Delicada')">Delicada</button><button class="tbtn" onclick="togTag(this,'Confiável')">Confiável</button><button class="tbtn" onclick="togTag(this,'Empoderada')">Empoderada</button><button class="tbtn" onclick="togTag(this,'Jovial')">Jovial</button><button class="tbtn" onclick="togTag(this,'Minimalista')">Minimalista</button><button class="tbtn" onclick="togTag(this,'Luxuosa')">Luxuosa</button><button class="tbtn" onclick="togTag(this,'Técnica')">Técnica</button>
+            </div>
+            <div class="thint" id="tHint">0 de 3 selecionados</div>
+            <div class="nav-row"><button class="btn-s" onclick="qGoTo(3)">← Voltar</button><button class="btn-p" onclick="qNext(4)"><span>Continuar →</span></button></div>
+          </div>
+        </div>
+
+        <!-- Q5 DIFERENCIAIS -->
+        <div class="screen" id="sc-5">
+          <div class="qwrap">
+            <div class="step-ind"><div class="sdots" id="d-5"></div><div class="stext" id="st-5"></div></div>
+            <div class="q-ey">Etapa 5 de 6</div>
+            <div class="q-title">O que te torna<br><em>única</em>?</div>
+            <div class="q-hint">Seu diferencial é o coração da sua marca.</div>
+            <div class="ig"><label class="il">Seu principal diferencial</label><textarea id="diferencial" placeholder="Ex: Atendimento personalizado com diagnóstico, produtos veganos..." oninput="bd.diferencial=this.value"></textarea></div>
+            <div class="ig"><label class="il">Por que suas clientes voltam?</label><textarea id="retorno" placeholder="Ex: Pelo acolhimento, pelos resultados duradouros..." oninput="bd.retorno=this.value"></textarea></div>
+            <div class="ig"><label class="il">Qual concorrente te inspira?</label><input type="text" id="concorrente" placeholder="Local ou estúdio que você admira" oninput="bd.concorrente=this.value"></div>
+            <div class="nav-row"><button class="btn-s" onclick="qGoTo(4)">← Voltar</button><button class="btn-p" onclick="qNext(5)"><span>Continuar →</span></button></div>
+          </div>
+        </div>
+
+        <!-- Q6 TOM -->
+        <div class="screen" id="sc-6">
+          <div class="qwrap">
+            <div class="step-ind"><div class="sdots" id="d-6"></div><div class="stext" id="st-6"></div></div>
+            <div class="q-ey">Etapa 6 de 6 — Última!</div>
+            <div class="q-title">Como você<br><em>se comunica</em>?</div>
+            <div class="q-hint">Defina o tom para sua marca ser consistente em todos os canais.</div>
+            <div class="ig"><label class="il">Tom de comunicação</label>
+              <div class="ogrid" style="grid-template-columns:repeat(2,1fr);">
+                <div class="ocard" onclick="selOpt(this,'tom','Sofisticado e elegante')"><div class="olabel">Sofisticado e elegante</div></div>
+                <div class="ocard" onclick="selOpt(this,'tom','Próximo e acolhedor')"><div class="olabel">Próximo e acolhedor</div></div>
+                <div class="ocard" onclick="selOpt(this,'tom','Técnico e especialista')"><div class="olabel">Técnico e especialista</div></div>
+                <div class="ocard" onclick="selOpt(this,'tom','Descontraído e divertido')"><div class="olabel">Descontraído e divertido</div></div>
+              </div>
+            </div>
+            <div class="ig"><label class="il">Algo mais que a Lídia deve considerar?</label><textarea id="extra" placeholder="Ex: Quero algo minimalista, tenho estúdio em casa..." oninput="bd.extra=this.value" style="min-height:70px;"></textarea></div>
+            <div class="nav-row"><button class="btn-s" onclick="qGoTo(5)">← Voltar</button><button class="btn-p" onclick="showResult()"><span>Gerar meus prompts ✦</span></button></div>
+          </div>
+        </div>
+
+        <!-- RESULTADO: PROMPTS PERSONALIZADOS -->
+        <div class="screen" id="sc-7">
+          <div class="result-wrap">
+
+            <div class="lmsg" style="margin-bottom:24px;">
+              <div class="lav">L</div>
+              <div class="lbody">
+                <div class="lname">Lídia</div>
+                <div class="lbubble pink">Pronto! 🎉 Criei <strong>6 prompts personalizados</strong> com as suas respostas. Copie cada um e cole no <strong>Claude.ai ou ChatGPT gratuito</strong> — você vai receber sua identidade visual completa!</div>
+                <div class="lbubble">Faça na ordem — cada prompt usa o resultado do anterior. Em 30 minutos sua marca estará definida. 🌸</div>
+              </div>
+            </div>
+
+            <div class="manual-cover">
+              <div class="cov-ey">Seus Prompts Personalizados — Lídia</div>
+              <div class="cov-brand" id="cBrand">—</div>
+              <div class="cov-nicho" id="cNicho">—</div>
+              <div class="cov-tags" id="cTags"></div>
+            </div>
+
+            <!-- Prompts gerados dinamicamente -->
+            <div id="prompts-container"></div>
+
+            <div style="display:flex;gap:11px;flex-wrap:wrap;margin-top:24px;padding-top:24px;border-top:1px solid var(--border);">
+              <button class="btn-p" onclick="window.print()"><span>Salvar como PDF</span></button>
+              <button class="btn-s" onclick="resetQuiz()">Refazer →</button>
+            </div>
+
+            <div class="next-block">
+              <div class="lmsg" style="margin-bottom:18px;text-align:left;">
+                <div class="lav">L</div>
+                <div class="lbody">
+                  <div class="lname">Lídia</div>
+                  <div class="lbubble dark">Identidade criada! ✅ Agora vamos para o próximo passo: <em>abrir o MEI e colocar sua empresa no mundo em 48 horas.</em></div>
+                </div>
+              </div>
+              <button class="ns-btn" onclick="goToGuia()">Continuar — Etapa 2: Empresa & R$ 3.000 →</button>
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- /qWrap -->
+    </div><!-- /stage identity -->
+
+    <!-- STAGE 2: GUIA -->
+    <div class="stage" id="st-guia">
+      <div class="guia-wrap">
+
+        <div class="lmsg fade-in" style="padding-top:36px;">
+          <div class="lav">L</div>
+          <div class="lbody">
+            <div class="lname">Lídia</div>
+            <div class="lbubble">Identidade feita. ✅ Agora é hora de <strong>existir profissionalmente</strong> e construir o caminho para os R$ 3.000.</div>
+          </div>
+        </div>
+
+        <div class="promise fade-in">
+          <div class="prom-ey">A promessa da Lídia</div>
+          <div class="prom-title">Empresa pronta em <em>48 horas.</em><br>Campanhas no ar em 7 dias.</div>
+          <div class="prom-sub">Plano realista para quem está começando do zero — sem capital, mas com talento.</div>
+          <div class="prom-pills">
+            <div class="ppill on">✅ Identidade feita</div>
+            <div class="ppill on">48h → empresa pronta</div>
+            <div class="ppill on">7 dias → campanhas</div>
+            <div class="ppill on">90 dias → R$ 3.000/mês</div>
+          </div>
+        </div>
+
+        <!-- FASE 1 48H -->
+        <div class="sdiv fade-in"><div class="sdiv-line"></div><div class="sdiv-label">Fase 1 · Dias 1 e 2</div><div class="sdiv-line"></div></div>
+        <div class="lmsg fade-in"><div class="lav">L</div><div class="lbody"><div class="lname">Lídia</div><div class="lbubble">Nas próximas <strong>48 horas</strong>, você faz tudo isso — de graça. Vamos! 👇</div></div></div>
+        <div class="fcard rose fade-in">
+          <div class="flabel">48 horas · R$ 0</div>
+          <div class="ftitle">Sua empresa existe. Profissionalmente.</div>
+          <div class="fperiod">Do nada para uma marca real em 2 dias</div>
+          <div class="fmeta"><span class="fml">Objetivo</span><span class="fmv">Estar pronta para receber clientes pagantes</span></div>
+          <ul class="ftasks">
+            <li class="ftask"><span class="tism">📋</span><div><div class="tt">Abrir o MEI (gov.br → Portal do Empreendedor)</div><div class="td">CNAE 9602-5/01. Gratuito, 10 minutos. Sai com CNPJ na hora.</div><span class="tpill pfree">Gratuito</span></div></li>
+            <li class="ftask"><span class="tism">📱</span><div><div class="tt">Criar conta profissional no Instagram</div><div class="td">Nome da marca + cidade. Bio com especialidade e link do WhatsApp. Use sua identidade!</div><span class="tpill pfree">Gratuito</span></div></li>
+            <li class="ftask"><span class="tism">💬</span><div><div class="tt">Configurar WhatsApp Business</div><div class="td">Catálogo com serviços e preços. Mensagem automática de boas-vindas.</div><span class="tpill pfree">Gratuito</span></div></li>
+            <li class="ftask"><span class="tism">💼</span><div><div class="tt">Montar espaço de atendimento em casa</div><div class="td">Cadeira, boa iluminação natural, fundo limpo. Fotografável. Sem gastar nada.</div><span class="tpill pfree">R$ 0</span></div></li>
+            <li class="ftask"><span class="tism">📸</span><div><div class="tt">3 a 5 atendimentos gratuitos para portfólio</div><div class="td">Amigas ou familiares. Antes e depois. Peça autorização para postar.</div><span class="tpill pkey">Prioridade</span></div></li>
+            <li class="ftask"><span class="tism">💳</span><div><div class="tt">Criar link de pagamento</div><div class="td">InfinitePay ou Mercado Pago. Sem mensalidade. Coloque na bio e no WhatsApp.</div><span class="tpill pfree">Sem mensalidade</span></div></li>
+          </ul>
+        </div>
+
+        <!-- FASE 2 7 DIAS -->
+        <div class="sdiv fade-in"><div class="sdiv-line"></div><div class="sdiv-label">Fase 2 · Dias 3 a 7</div><div class="sdiv-line"></div></div>
+        <div class="lmsg fade-in"><div class="lav">L</div><div class="lbody"><div class="lname">Lídia</div><div class="lbubble dark">Empresa aberta. Agora vamos colocar <em>campanhas no ar.</em> Orgânicas primeiro — custo zero. Pagas depois para acelerar.</div></div></div>
+        <div class="cgrid fade-in">
+          <div class="ccard"><div class="ctype org">Orgânica — R$ 0</div><div class="ctitle">Sem investimento</div><ul class="citems"><li>1 Reel por semana (antes/depois real)</li><li>Stories diários: processo e dica rápida</li><li>Divulgar em grupos locais de WhatsApp</li><li>"Indique uma amiga e ganhe 20% off"</li><li>Parceria com negócios complementares</li></ul></div>
+          <div class="ccard"><div class="ctype paga">Paga — a partir de R$ 20</div><div class="ctitle">Com impulsionamento</div><ul class="citems"><li>Impulsionar 1 Reel de antes/depois</li><li>Segmentar: mulheres da sua cidade</li><li>R$ 20 a R$ 30 — alto retorno local</li><li>Campanha de "primeira vez com desconto"</li><li>Testar 2 criativos e manter o melhor</li></ul></div>
+        </div>
+        <div class="fcard gold fade-in">
+          <div class="flabel">Dias 3 a 7 · Campanhas no ar</div>
+          <div class="ftitle">O que fazer nesta semana</div>
+          <div class="fperiod">7 dias para ter movimento real de clientes</div>
+          <ul class="ftasks">
+            <li class="ftask"><span class="tism">💰</span><div><div class="tt">Definir e publicar tabela de preços</div><div class="td">Pesquise a concorrência local. Post no Instagram + status do WhatsApp.</div><span class="tpill pkey">Prioridade</span></div></li>
+            <li class="ftask"><span class="tism">🎥</span><div><div class="tt">Gravar e publicar o primeiro Reel</div><div class="td">Antes/depois real. Sem edição elaborada. Feito é melhor que perfeito.</div><span class="tpill porg">Orgânico</span></div></li>
+            <li class="ftask"><span class="tism">📢</span><div><div class="tt">Divulgar em 5 grupos locais</div><div class="td">WhatsApp de bairro, mães, Facebook da cidade. Foto + preço + contato.</div><span class="tpill pfree">Gratuito</span></div></li>
+            <li class="ftask"><span class="tism">🚀</span><div><div class="tt">Impulsionar o melhor post (opcional)</div><div class="td">R$ 20 a R$ 30 no Reel de antes/depois. Segmente mulheres da sua cidade.</div><span class="tpill plow">R$ 20–30</span></div></li>
+            <li class="ftask"><span class="tism">📅</span><div><div class="tt">Abrir agenda e divulgar horários</div><div class="td">Calendly ou Google Agenda. Divulgue os horários disponíveis nas redes.</div><span class="tpill pfree">Gratuito</span></div></li>
+          </ul>
+        </div>
+        <div class="script-b fade-in">
+          <div class="sc-label">Script da Lídia — primeiro contato no WhatsApp</div>
+          <div class="sc-text">"Oi <em>[nome]</em>! 🌸 Que bom falar com você! Sou <em>[seu nome]</em>, especialista em <em>[sua especialidade]</em> aqui em <em>[cidade]</em>. Qual dia funciona melhor pra você essa semana, manhã ou tarde?"</div>
+        </div>
+
+        <!-- FASE 3 90 DIAS -->
+        <div class="sdiv fade-in"><div class="sdiv-line"></div><div class="sdiv-label">Fase 3 · Dias 8 a 90</div><div class="sdiv-line"></div></div>
+        <div class="lmsg fade-in"><div class="lav">L</div><div class="lbody"><div class="lname">Lídia</div><div class="lbubble">Do dia 8 ao dia 90, o objetivo é um só: <strong>construir a recorrência que gera R$ 3.000 por mês.</strong> Aqui está a matemática.</div></div></div>
+        <div class="math-b fade-in">
+          <div class="math-ey">A matemática dos R$ 3.000</div>
+          <div class="math-row"><span class="mlabel">40 atendimentos × R$ 60 médio</span><span class="mval">R$ 2.400</span></div>
+          <div class="math-row"><span class="mlabel">5 combos premium × R$ 120</span><span class="mval">R$ 600</span></div>
+          <div class="math-tot"><span class="mtlabel">Total mensal</span><span class="mtval">R$ 3.000 ✓</span></div>
+        </div>
+        <div class="fcard dark fade-in">
+          <div class="flabel">Dias 8 a 90 · Rotina mensal</div>
+          <div class="ftitle">O que você faz todo mês</div>
+          <div class="fperiod">Para chegar e manter os R$ 3.000</div>
+          <ul class="ftasks">
+            <li class="ftask"><span class="tism">🔁</span><div><div class="tt">Protocolo de retorno ativo</div><div class="td">Dia 20 após cada atendimento: mensagem lembrando do retorno.</div><span class="tpill pkey">Fidelização</span></div></li>
+            <li class="ftask"><span class="tism">📦</span><div><div class="tt">Oferecer combos em todo atendimento</div><div class="td">Ao finalizar: "Quer aproveitar e incluir [serviço] com 15% off?"</div><span class="tpill pkey">Ticket maior</span></div></li>
+            <li class="ftask"><span class="tism">🎥</span><div><div class="tt">1 Reel por semana sem falta</div><div class="td">Antes/depois, processo, dica. Feito é melhor que perfeito.</div><span class="tpill porg">Orgânico</span></div></li>
+            <li class="ftask"><span class="tism">🚀</span><div><div class="tt">Impulsionar 1 post por mês</div><div class="td">R$ 20 a R$ 30. O melhor Reel do mês. Alto retorno local.</div><span class="tpill plow">R$ 20–30</span></div></li>
+            <li class="ftask"><span class="tism">📈</span><div><div class="tt">Reajustar preços ao lotar a agenda</div><div class="td">Com agenda cheia, aumente 10 a 15%. Profissional boa perde poucos e ganha mais.</div><span class="tpill pkey">Mais receita</span></div></li>
+          </ul>
+        </div>
+
+        <!-- FERRAMENTAS -->
+        <div class="sdiv fade-in"><div class="sdiv-line"></div><div class="sdiv-label">Ferramentas da Lídia</div><div class="sdiv-line"></div></div>
+        <div class="tgrid2 fade-in">
+          <div class="tg"><div class="tgl tlgreen">G</div><div class="tgname">gov.br</div><div class="tgdesc">Abrir o MEI. Gratuito, 10 min.</div><div class="tgtag">Gratuito</div></div>
+          <div class="tg"><div class="tgl tlrose">C</div><div class="tgname">Canva</div><div class="tgdesc">Logo, posts, stories.</div><div class="tgtag">Gratuito</div></div>
+          <div class="tg"><div class="tgl tlgreen">W</div><div class="tgname">WhatsApp Business</div><div class="tgdesc">Catálogo e automação.</div><div class="tgtag">Gratuito</div></div>
+          <div class="tg"><div class="tgl tlblue">G</div><div class="tgname">Google Agenda</div><div class="tgdesc">Agenda e agendamento.</div><div class="tgtag">Gratuito</div></div>
+          <div class="tg"><div class="tgl tlgold">IA</div><div class="tgname">Claude / ChatGPT</div><div class="tgdesc">Prompts da sua identidade.</div><div class="tgtag">Gratuito</div></div>
+          <div class="tg"><div class="tgl tlrose">M</div><div class="tgname">Mercado Pago</div><div class="tgdesc">Pix e cartão. Sem mensalidade.</div><div class="tgtag">Gratuito</div></div>
+        </div>
+
+        <!-- CHECKLIST -->
+        <div class="sdiv fade-in"><div class="sdiv-line"></div><div class="sdiv-label">Checklist dos 90 dias</div><div class="sdiv-line"></div></div>
+        <div class="lmsg fade-in"><div class="lav">L</div><div class="lbody"><div class="lname">Lídia</div><div class="lbubble">Use essa lista para não perder o fio. Cada item marcado é um passo a mais em direção à sua independência. 💪</div></div></div>
+        <ul class="cklist fade-in">
+          <li><div class="ck-c">✓</div>Identidade visual criada (feito! ✅)</li>
+          <li><div class="ck-c">2</div>MEI aberto — CNPJ em mãos</li>
+          <li><div class="ck-c">3</div>Instagram profissional com bio completa</li>
+          <li><div class="ck-c">4</div>WhatsApp Business com catálogo</li>
+          <li><div class="ck-c">5</div>Link de pagamento ativo</li>
+          <li><div class="ck-c">6</div>5 atendimentos gratuitos para portfólio</li>
+          <li><div class="ck-c">7</div>Tabela de preços publicada</li>
+          <li><div class="ck-c">8</div>Primeiro Reel publicado</li>
+          <li><div class="ck-c">9</div>Divulgação em grupos locais</li>
+          <li><div class="ck-c">10</div>Primeiros 10 atendimentos pagos</li>
+          <li><div class="ck-c">11</div>Protocolo de retorno ativo</li>
+          <li><div class="ck-c">12</div>Combos criados e ofertados</li>
+          <li><div class="ck-c">13</div>Parceria com negócio local</li>
+          <li><div class="ck-c">14</div>1 post impulsionado por mês</li>
+          <li><div class="ck-c">15</div>R$ 3.000 no extrato do mês 3 🎉</li>
+        </ul>
+
+        <div class="lmsg fade-in" style="margin-top:32px;">
+          <div class="lav">L</div>
+          <div class="lbody">
+            <div class="lname">Lídia</div>
+            <div class="lbubble dark">"Dia 1 sem capital, dependendo de outra pessoa. Dia 90, R$ 3.000 feitos com as suas próprias mãos. <em>Isso é independência financeira real.</em>"</div>
+            <div class="lbubble pink"><strong>Agora vai.</strong> Abra o MEI. Leva 10 minutos. Eu acredito em você. 🌸</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="final-s">
+        <div class="fav">L</div>
+        <div class="ftitle2">Sua independência<br>começa <em>hoje</em></div>
+        <div class="fsub">Abrir o MEI é gratuito e leva 10 minutos. É o único passo que você precisa dar agora.</div>
+        <a href="https://www.gov.br/empresas-e-negocios/pt-br/empreendedor" target="_blank" class="fbtn">Abrir meu MEI agora →</a>
+        <div class="fnote">gov.br — gratuito e oficial</div>
+      </div>
+      <footer>
+        <div class="fbrand">Lídia — <em>Ser Bella</em></div>
+        <div class="fcopy">© 2025 · Kit da Profissional da Beleza · Todos os direitos reservados</div>
+      </footer>
+    </div><!-- /stage guia -->
+
+  </main>
+
+  <div class="sticky" id="sticky">
+    <div style="display:flex;align-items:center;gap:9px;"><div class="stav">L</div><div class="sttext"><strong>Lídia</strong> está com você</div></div>
+    <button class="stbtn" id="stBtn" onclick="stickyAct()">Próximo passo →</button>
+  </div>
+</div><!-- /app -->
+
+<script>
+// STATE
+const TS=6;
+let bd={nicho:'',nome:'',cidade:'',tempo:'',idade:'',valor:'',cliente:'',personalidade:[],diferencial:'',retorno:'',concorrente:'',tom:'',extra:''};
+let stage='identity';
+let quizOn=false;
+
+// WELCOME
+function startApp(){
+  document.getElementById('welcome').classList.add('hide');
+  setTimeout(()=>{
+    document.getElementById('welcome').style.display='none';
+    document.getElementById('app').classList.add('visible');
+    setPhase('Passo 1 de 2 — Identidade',15);
+    initObs();initScroll();
+  },800);
+}
+
+// QUIZ NAV
+function startQuiz(){document.getElementById('qIntro').style.display='none';document.getElementById('qWrap').style.display='block';quizOn=true;updDots(1);}
+
+function updDots(s){
+  const c=document.getElementById('d-'+s);if(!c)return;c.innerHTML='';
+  for(let i=1;i<=TS;i++){const d=document.createElement('div');d.className='sdot2'+(i<s?' done':(i===s?' active':''));c.appendChild(d);}
+  const st=document.getElementById('st-'+s);if(st)st.textContent=s+' de '+TS;
+  setPhase('Identidade — etapa '+s+' de '+TS,Math.round((s/TS)*40));
+}
+
+function qGoTo(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sc-'+n).classList.add('active');
+  if(n>=1&&n<=TS)updDots(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function qNext(s){
+  if(s===1&&!bd.nicho){alert('Selecione ou descreva sua especialidade.');return;}
+  if(s===2&&!bd.nome){alert('Preencha o nome do seu estúdio.');return;}
+  if(s===4&&bd.personalidade.length===0){alert('Selecione ao menos 1 adjetivo.');return;}
+  qGoTo(s+1);
+}
+
+function selOpt(el,f,v){el.parentElement.querySelectorAll('.ocard').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');bd[f]=v;}
+
+function togTag(el,tag){
+  if(el.classList.contains('selected')){el.classList.remove('selected');bd.personalidade=bd.personalidade.filter(t=>t!==tag);}
+  else{if(bd.personalidade.length>=3){alert('Máximo 3 adjetivos.');return;}el.classList.add('selected');bd.personalidade.push(tag);}
+  document.getElementById('tHint').textContent=bd.personalidade.length+' de 3 selecionados';
+}
+
+// GERAR RESULTADO
+function showResult(){
+  if(!bd.tom){alert('Selecione o tom de comunicação.');return;}
+  qGoTo(7);
+  setPhase('Seus prompts estão prontos! ✅',50);
+
+  // Capa
+  document.getElementById('cBrand').innerHTML=(bd.nome||'Sua Marca')+' <em>✦</em>';
+  document.getElementById('cNicho').textContent=bd.nicho;
+  const tagsEl=document.getElementById('cTags');tagsEl.innerHTML='';
+  bd.personalidade.forEach(p=>{const pill=document.createElement('div');pill.className='cov-pill';pill.textContent=p;tagsEl.appendChild(pill);});
+  if(bd.cidade){const pill=document.createElement('div');pill.className='cov-pill';pill.textContent=bd.cidade;tagsEl.appendChild(pill);}
+
+  // Gerar prompts
+  buildPrompts();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildPrompts(){
+  const nome=bd.nome||'minha marca';
+  const nicho=bd.nicho||'beleza';
+  const pers=bd.personalidade.join(', ')||'sofisticada, acolhedora, profissional';
+  const cliente=bd.cliente||bd.valor||'mulheres que valorizam cuidado e bem-estar';
+  const tom=bd.tom||'sofisticado e acolhedor';
+  const dif=bd.diferencial||'qualidade e atenção aos detalhes';
+  const ret=bd.retorno||'pelos resultados e pelo atendimento';
+  const extra=bd.extra?`\n\nObservação adicional: ${bd.extra}`:'';
+
+  const prompts=[
+    {
+      num:'01',
+      title:'Propósito & Posicionamento',
+      sub:'Por que sua marca existe e para quem',
+      prompt:`Você é um estrategista de branding especialista em negócios de beleza e estética no Brasil.\n\nMeu negócio se chama "${nome}", sou ${nicho}, atendo ${cliente} e meu principal diferencial é: ${dif}.\n\nCom base nisso, defina para mim:\n1. Frase de propósito da marca (máx 20 palavras — poderosa e inspiradora)\n2. Posicionamento único: o que me diferencia da concorrência\n3. Para quem é essa marca (perfil detalhado da cliente ideal)\n4. Tom de voz ideal: ${tom}\n\nEscreva em português brasileiro, sem bullet points, de forma fluida e inspiradora.${extra}`,
+      tip:`Cole este prompt no Claude.ai ou ChatGPT gratuito. Salve o resultado — você vai usar nos próximos prompts.`
+    },
+    {
+      num:'02',
+      title:'Personalidade & Essência',
+      sub:'Os pilares que definem como sua marca se comporta',
+      prompt:`Continuando o branding da marca "${nome}" (${nicho}).\n\nA personalidade da marca é: ${pers}.\nCliente ideal: ${cliente}.\nTom de voz: ${tom}.\n\nDefina:\n1. 3 pilares de personalidade da marca (nome + descrição de 1 frase cada)\n2. A essência da marca em 1 frase poderosa (máx 15 palavras)\n3. 2 marcas do universo da beleza que têm uma identidade similar à que queremos construir\n4. Como essa marca se diferencia dessas referências\n\nEscreva em português brasileiro de forma clara e inspiradora.`,
+      tip:`Use o resultado do Prompt 01 para contextualizar antes de colar este.`
+    },
+    {
+      num:'03',
+      title:'Paleta de Cores',
+      sub:'4 cores com propósito para sua identidade visual',
+      prompt:`Preciso criar a paleta de cores para a marca "${nome}", especializada em ${nicho}.\n\nPersonalidade: ${pers}.\nCliente ideal: ${cliente}.\nTom: ${tom}.\n\nSugira uma paleta com exatamente 4 cores:\n- 1 cor Principal (logo, títulos, elementos de destaque)\n- 1 cor Secundária (fundos, áreas amplas)\n- 1 cor de Acento (botões, detalhes, chamadas para ação)\n- 1 cor Neutra (textos, elementos sutis)\n\nPara cada cor informe: nome poético, código HEX, emoção que transmite, e onde usar na prática (Instagram, cartão de visita, WhatsApp).\n\nO mercado de estética tende ao rosa e nude — surpreenda com uma paleta sofisticada e diferenciada.`,
+      tip:`Copie os códigos HEX e insira no Canva para criar seus templates com as cores exatas.`
+    },
+    {
+      num:'04',
+      title:'Tipografia',
+      sub:'Fontes que comunicam a essência da sua marca',
+      prompt:`Preciso definir a tipografia para a marca "${nome}" (${nicho}).\n\nPersonalidade: ${pers}.\nTom: ${tom}.\n\nSugira 2 fontes do Google Fonts (gratuitas) que funcionem juntas:\n1. Fonte para títulos e nome da marca (pode ser serifada elegante ou script refinado)\n2. Fonte para textos, preços e legendas (clara, legível, moderna)\n\nPara cada fonte:\n- Nome exato no Google Fonts\n- Por que combina com essa marca de ${nicho}\n- Como usar: tamanhos para posts do Instagram, stories, cardápio de serviços e cartão de visita\n- Mostre um exemplo de texto com a fonte aplicada\n\nFontes que funcionam bem em estética: Cormorant Garamond, Playfair Display, Josefin Sans, Raleway.`,
+      tip:`Acesse fonts.google.com, busque pelos nomes sugeridos e faça o download gratuito para usar no Canva.`
+    },
+    {
+      num:'05',
+      title:'Tom de Voz na Prática',
+      sub:'Como falar com sua cliente em cada canal',
+      prompt:`Preciso definir o tom de voz da marca "${nome}" (${nicho}) na prática.\n\nTom definido: ${tom}.\nCliente ideal: ${cliente}.\n\nMe entregue:\n1. 5 palavras que essa marca USA na comunicação\n2. 5 palavras que essa marca EVITA\n3. Reescreva estas frases no tom da marca:\n   - "Faço ${nicho}"\n   - "Agende seu horário pelo link na bio"\n   - "Não faço atendimento sem agendamento"\n   - "Veja meus preços"\n4. Como responder um elogio no Instagram\n5. Como responder uma reclamação no Instagram\n\nEscreva de forma prática, como um guia que posso usar no dia a dia.`,
+      tip:`Salve esse resultado no seu celular para consultar sempre que for postar ou responder clientes.`
+    },
+    {
+      num:'06',
+      title:'Manual Completo',
+      sub:'Documento final para usar com fornecedores e parceiros',
+      prompt:`Com base em tudo que definimos para a marca "${nome}" (${nicho}), crie meu Mini Manual de Identidade Visual.\n\nResumindo o que temos:\n- Personalidade: ${pers}\n- Cliente ideal: ${cliente}\n- Tom de voz: ${tom}\n- Diferencial: ${dif}\n- Por que clientes voltam: ${ret}${extra}\n\nEstruture o manual com:\n1. Sobre a marca (propósito, posicionamento, para quem é)\n2. Personalidade e essência\n3. Paleta de cores (com HEX)\n4. Tipografia com hierarquia\n5. Tom de voz e vocabulário\n6. Aplicações: Instagram, WhatsApp Business, cartão de visita\n7. O que fazer e o que EVITAR\n\nEscreva em linguagem clara, como se fosse para alguém sem formação em design. Máximo 2 páginas A4.`,
+      tip:`Cole o resultado no Notion ou Google Docs, adicione prints dos elementos visuais criados no Canva e seu manual estará completo!`
+    }
+  ];
+
+  const container=document.getElementById('prompts-container');
+  container.innerHTML='';
+  prompts.forEach((p,i)=>{
+    const card=document.createElement('div');
+    card.className='prompt-card';
+    card.innerHTML=`
+      <div class="pc-head" onclick="togPrompt('p${i}')">
+        <div class="pc-num">${p.num}</div>
+        <div class="pc-meta"><div class="pc-title">${p.title}</div><div class="pc-sub">${p.sub}</div></div>
+        <div class="pc-arrow" id="arr-p${i}">+</div>
+      </div>
+      <div class="pc-body" id="body-p${i}">
+        <div class="pc-box">
+          <div class="pc-box-label">Prompt personalizado</div>
+          <div class="pc-text" id="txt-p${i}">${p.prompt}</div>
+        </div>
+        <div class="pc-tip"><strong>Como usar:</strong> ${p.tip}</div>
+        <button class="copy-btn" onclick="copyP('txt-p${i}',this)">Copiar prompt</button>
+      </div>`;
+    container.appendChild(card);
+  });
+
+  // Abre o primeiro automaticamente
+  setTimeout(()=>togPrompt('p0'),400);
+}
+
+function togPrompt(id){
+  const body=document.getElementById('body-'+id);
+  const arr=document.getElementById('arr-'+id);
+  const isOpen=body.classList.contains('open');
+  document.querySelectorAll('.pc-body').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.pc-arrow').forEach(a=>{a.classList.remove('open');a.textContent='+';});
+  if(!isOpen){body.classList.add('open');arr.classList.add('open');arr.textContent='×';}
+}
+
+function copyP(id,btn){
+  const text=document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='✓ Copiado!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copiar prompt';btn.classList.remove('copied');},2000);
+  });
+}
+
+function resetQuiz(){
+  bd={nicho:'',nome:'',cidade:'',tempo:'',idade:'',valor:'',cliente:'',personalidade:[],diferencial:'',retorno:'',concorrente:'',tom:'',extra:''};
+  document.querySelectorAll('.ocard').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('.tbtn').forEach(t=>t.classList.remove('selected'));
+  document.querySelectorAll('input[type=text],textarea').forEach(i=>i.value='');
+  document.querySelectorAll('select').forEach(s=>s.selectedIndex=0);
+  document.getElementById('tHint').textContent='0 de 3 selecionados';
+  document.getElementById('prompts-container').innerHTML='';
+  startQuiz();qGoTo(1);
+}
+
+// TRANSIÇÃO PARA GUIA
+function goToGuia(){
+  stage='guia';
+  document.getElementById('st-identity').classList.remove('active');
+  document.getElementById('st-guia').classList.add('active');
+  setPhase('Passo 2 de 2 — Empresa & R$ 3.000',60);
+  document.getElementById('stBtn').textContent='Abrir MEI →';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// UTILS
+function setPhase(txt,pct){
+  document.getElementById('hPhase').textContent=txt;
+  document.getElementById('pFill').style.width=pct+'%';
+}
+
+function stickyAct(){
+  if(stage==='guia')window.open('https://www.gov.br/empresas-e-negocios/pt-br/empreendedor','_blank');
+  else if(quizOn)window.scrollTo({top:0,behavior:'smooth'});
+  else startQuiz();
+}
+
+function initObs(){
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.1});
+  document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+}
+
+function initScroll(){
+  window.addEventListener('scroll',()=>{
+    document.getElementById('sticky').classList.toggle('show',window.scrollY>400);
+    if(stage==='guia'){
+      const tot=document.body.scrollHeight-window.innerHeight;
+      document.getElementById('pFill').style.width=Math.min(100,60+Math.round((window.scrollY/tot)*40))+'%';
+    }
+  });
+}
+</script>
+</body>
+</html>
